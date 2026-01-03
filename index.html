@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Birthday Sayangg!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400;600&family=VT323&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        /* --- 1. GLOBAL & BACKGROUND --- */
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            height: 100vh; width: 100vw;
+            overflow: hidden;
+            /* Warna Dasar Gradasi Pink */
+            background: linear-gradient(180deg, #ffc3a0 0%, #ffafbd 50%, #ff9a9e 100%);
+            display: flex; justify-content: center; align-items: center;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        /* NEW: Pattern Garis Vector Transparan */
+        .bg-pattern {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none;
+            /* Membuat pola garis diagonal tipis */
+            background-image: repeating-linear-gradient(
+                -45deg,
+                transparent,
+                transparent 20px,
+                rgba(255, 255, 255, 0.15) 20px,
+                rgba(255, 255, 255, 0.15) 22px
+            );
+        }
+
+        /* Animasi Floating Hearts */
+        .bg-hearts {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; z-index: 0; pointer-events: none;
+        }
+
+        .floating-heart {
+            position: absolute; bottom: -50px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 20px; animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- 2. PHASE 1: KUE & LILIN --- */
+        #candle-phase {
+            position: absolute; width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 50; transition: opacity 1s ease-out;
+            background: rgba(0,0,0,0.2); 
+        }
+
+        .cake-container { position: relative; margin-bottom: 50px; transform: scale(0.8); }
+        .cake { position: relative; width: 250px; height: 200px; }
+        .plate { width: 270px; height: 110px; position: absolute; bottom: -10px; left: -10px; background-color: #ccc; border-radius: 50%; box-shadow: 0 2px 0 #b3b3b3, 0 4px 0 #b3b3b3, 0 5px 40px rgba(0, 0, 0, 0.5); }
+        .layer { position: absolute; display: block; width: 250px; height: 100px; border-radius: 50%; background-color: #ff94c2; box-shadow: 0 2px 0px #e66ea0, 0 4px 0px #d65c8e, 0 6px 0px #c64b7d, 0 30px 40px rgba(0, 0, 0, 0.1); }
+        .layer-top { top: 0px; z-index: 10; background: #ffb7d6; }
+        .layer-middle { top: 33px; z-index: 9; }
+        .layer-bottom { top: 66px; z-index: 8; }
+        .icing { top: 2px; left: 5px; background-color: #f0f0f0; width: 240px; height: 90px; border-radius: 50%; position: absolute; z-index: 11; }
+        
+        .candle {
+            background-color: #7B020B; width: 16px; height: 50px;
+            border-radius: 8px / 4px; position: absolute; top: -20px; left: 50%; margin-left: -8px;
+            z-index: 15; cursor: pointer;
+        }
+        .candle::after { content: ''; position: absolute; top: -40px; left: -20px; right: -20px; bottom: 0; background: transparent; z-index: 50; }
+        .candle:nth-child(1) { left: 50%; top: -30px; } 
+        .candle:nth-child(2) { left: 35%; top: -20px; }
+        .candle:nth-child(3) { left: 65%; top: -20px; }
+        .candle:nth-child(4) { left: 20%; top: -5px; }
+        .candle:nth-child(5) { left: 80%; top: -5px; }
+
+        .flame {
+            position: absolute; background-color: orange; width: 15px; height: 35px;
+            border-radius: 10px 10px 10px 10px / 25px 25px 10px 10px;
+            top: -34px; left: 50%; margin-left: -7.5px; z-index: 20;
+            box-shadow: 0 0 10px rgba(255, 165, 0, 0.5), 0 0 20px rgba(255, 165, 0, 0.5), 0 0 60px rgba(255, 165, 0, 0.5), 0 0 80px rgba(255, 165, 0, 0.5);
+            transform-origin: 50% 90%; animation: flicker 1s ease-in-out alternate infinite;
+            transition: opacity 0.5s ease; pointer-events: none;
+        }
+        @keyframes flicker { 0% { transform: skewX(5deg); } 25% { transform: skewX(-5deg); } 50% { transform: skewX(10deg); } 75% { transform: skewX(-10deg); } 100% { transform: skewX(5deg); } }
+        .flame-off { opacity: 0; animation: none; }
+        
+        #micBtn { 
+            margin-top: 20px; padding: 12px 24px; background: white; 
+            border: none; color: #d63384; border-radius: 30px; 
+            cursor: pointer; font-size: 16px; font-weight: bold; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            transition: all 0.3s; 
+            position: relative; z-index: 200;
+        }
+        #micBtn:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        
+        /* --- 3. GATEKEEPER PHASE --- */
+        #gate-phase {
+            display: none; position: absolute; width: 100%; height: 100%;
+            flex-direction: column; justify-content: center; align-items: center;
+            z-index: 45; text-align: center;
+        }
+        .gate-card {
+            background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 80%; max-width: 350px;
+        }
+        .gate-btn {
+            padding: 10px 20px; border: none; border-radius: 20px;
+            font-weight: bold; cursor: pointer; margin: 10px; font-size: 1rem;
+            transition: all 0.3s;
+        }
+        #btnYes { background: #d63384; color: white; box-shadow: 0 4px 10px rgba(214, 51, 132, 0.3); }
+        #btnNo { background: #ccc; color: #555; position: relative; }
+
+        /* --- 4. MAZE GAME PHASE --- */
+        #game-phase {
+            display: none; position: absolute; width: 100%; height: 100%;
+            flex-direction: column; justify-content: center; align-items: center;
+            z-index: 40;
+            background: rgba(255, 183, 178, 0.2);
+        }
+        
+        .game-title {
+            font-family: 'VT323', monospace; color: white;
+            font-size: 2rem; text-shadow: 2px 2px 0px #d63384;
+            margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;
+        }
+
+        #maze-container {
+            display: grid;
+            grid-template-columns: repeat(10, 30px);
+            grid-template-rows: repeat(10, 30px);
+            gap: 0; /* JALUR MENYAMBUNG */
+            background: #c0392b; /* BACKGROUND MERAH */
+            padding: 5px;
+            border-radius: 10px;
+            border: 4px solid white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .cell {
+            width: 30px; height: 30px;
+            background: #ffffff; /* JALUR PUTIH */
+            border-radius: 0;
+        }
+        
+        .wall { background: #c0392b; } /* TEMBOK MERAH */
+        
+        .player {
+            background: #ffffff;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 20px;
+        }
+        
+        .goal {
+            background: #ffffff;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 20px;
+            animation: pulse 1s infinite;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+        }
+        .control-row { display: flex; gap: 15px; }
+        .control-btn {
+            width: 50px; height: 50px;
+            background: white; border: none; border-radius: 15px;
+            font-size: 24px; color: #d63384;
+            box-shadow: 0 4px 0 #ff99cc;
+            cursor: pointer;
+        }
+        .control-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        #win-modal {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 100;
+            justify-content: center; align-items: center;
+        }
+        .win-card {
+            background: white; padding: 30px; border-radius: 20px; text-align: center;
+            width: 80%; max-width: 300px; animation: popup 0.5s;
+        }
+        .win-card h2 { color: #d63384; font-family: 'VT323', monospace; font-size: 2rem; margin: 0; }
+
+        /* --- 5. PHASE KARTU --- */
+        #card-phase {
+            display: none; width: 100%; height: 100%;
+            justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 1s ease-in; z-index: 10;
+        }
+
+        .container { 
+            position: relative; background: rgba(255, 255, 255, 0.95); 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); overflow: hidden; 
+            display: flex; flex-direction: column; 
+            width: 90%; height: 85%; max-width: 400px; max-height: 700px;
+            border-radius: 30px; 
+        }
+
+        .slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            padding-bottom: 80px; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; 
+            text-align: center; padding: 30px; box-sizing: border-box; 
+            opacity: 0; transform: scale(0.95); transition: all 0.6s ease-in-out; 
+            pointer-events: none; 
+        }
+        .slide.active { opacity: 1; transform: scale(1); pointer-events: auto; z-index: 10; }
+
+        h1 { font-family: 'Dancing Script', cursive; color: #d63384; font-size: 2.5rem; margin-bottom: 10px; }
+        p { font-size: 0.9rem; color: #555; line-height: 1.5; margin-bottom: 15px; }
+        
+        .btn-start { background: linear-gradient(45deg, #ff6b6b, #d63384); color: white; border: none; padding: 12px 35px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 15px rgba(214, 51, 132, 0.4); margin-top: 20px;}
+        .foto-frame { width: 180px; height: 180px; border-radius: 20px; overflow: hidden; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.2); margin-bottom: 15px; background: #ffe6e6; }
+        .foto-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        .memories-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; margin-bottom: 10px; }
+        .memories-grid img { width: 100%; height: 90px; object-fit: cover; border-radius: 10px; box-shadow: 0 3px 6px rgba(0,0,0,0.1); border: 2px solid white; }
+
+        .nav-container { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 80%; display: flex; justify-content: space-between; z-index: 20; }
+        .nav-btn { background: #d63384; color: white; border: none; padding: 10px 25px; border-radius: 30px; font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 10px rgba(214, 51, 132, 0.3); transition: opacity 0.3s; }
+        .nav-btn:disabled { opacity: 0; pointer-events: none; }
+
+        /* --- AMPLOP SURAT (TERTUTUP RAPAT) --- */
+        .envelope-wrapper {
+            position: relative; width: 240px; height: 150px;
+            margin-top: 30px; cursor: pointer; 
+            background: #c0392b; 
+            border-radius: 5px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); flex-shrink: 0; 
+        }
+        
+        /* 1. TUTUP AMPLOP (LID) - Paling atas */
+        .lid { 
+            position: absolute; top: 0; left: 0; width: 0; height: 0; 
+            border-style: solid; 
+            border-width: 80px 120px 0 120px; 
+            border-color: #ff8787 transparent transparent transparent; 
+            transform-origin: top; transition: transform 0.5s ease-in-out, z-index 0.2s 0.2s; z-index: 5; 
+        }
+
+        /* 2. KANTONG (POCKET) - Menutup surat sepenuhnya */
+        .pocket {
+            position: absolute; bottom: 0; left: 0; width: 0; height: 0;
+            border-style: solid;
+            border-width: 75px 120px; 
+            border-color: transparent #ff6b6b #ff4757 #ff6b6b;
+            z-index: 3;
+        }
+        
+        /* 3. SURAT (LETTER) - Di dalam */
+        .letter { 
+            position: absolute; 
+            width: 88%; height: 90%; 
+            background: #fff; 
+            top: 5%; left: 6%; 
+            padding: 15px; box-sizing: border-box; border-radius: 5px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 1; /* Sembunyi di belakang pocket */
+            overflow: hidden; display: flex; flex-direction: column; align-items: center; 
+        }
+        .letter p { font-size: 0.75rem; color: #444; text-align: left; width: 100%; line-height: 1.4; margin: 0; }
+        
+        /* 4. ANIMASI BUKA */
+        .envelope-wrapper.open .lid { transform: rotateX(180deg); z-index: 0; transition-delay: 0s; }
+        
+        .envelope-wrapper.open .letter { 
+            transform: translateY(-100px); 
+            height: 220px; 
+            z-index: 10; 
+            overflow-y: auto; 
+            transition-delay: 0.3s; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+        }
+
+        .heart-sticker { position: absolute; top: -45px; left: 50%; transform: translateX(-50%); font-size: 24px; color: #d63384; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2)); transition: opacity 0.3s; }
+        .envelope-wrapper.open .heart-sticker { opacity: 0; }
+
+        .btn-bonus { background: linear-gradient(45deg, #FF512F, #DD2476); color: white; border: none; padding: 10px 30px; border-radius: 50px; font-weight: bold; cursor: pointer; animation: pulse 2s infinite; margin-top: 10px;}
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.05);} 100% {transform: scale(1);} }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; display: none; justify-content: center; align-items: center; }
+        .modal.open { display: flex; }
+        .modal-content { background: white; padding: 20px; width: 90%; max-width: 350px; border-radius: 20px; text-align: center; position: relative; animation: popup 0.3s ease-out; }
+        @keyframes popup { from {transform: scale(0.8); opacity: 0;} to {transform: scale(1); opacity: 1;} }
+        .close-popup { position: absolute; top: 10px; right: 15px; font-size: 24px; color: #aaa; cursor: pointer; }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-pattern"></div>
+    <div class="bg-hearts" id="bgHearts"></div>
+
+    <audio id="lagu" loop>
+        <source src="Nadhif Basalamah - bergema sampai selamanya (Official Lyric Video).mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="candle-phase">
+        <h2 style="color: white; font-family: 'Dancing Script'; font-size: 2rem; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">Make a Wish & Blow! 🎂</h2>
+        <div class="cake-container">
+            <div class="cake">
+                <div class="plate"></div>
+                <div class="layer layer-bottom"></div>
+                <div class="layer layer-middle"></div>
+                <div class="layer layer-top"></div>
+                <div class="icing"></div>
+                <div class="candle"><div class="flame"></div></div>
+                <div class="candle"><div class="flame"></div></div>
+                <div class="candle"><div class="flame"></div></div>
+                <div class="candle"><div class="flame"></div></div>
+                <div class="candle"><div class="flame"></div></div>
+            </div>
+        </div>
+        <button id="micBtn">🎤 Nyalakan Mic</button>
+        <p style="color: white; margin-top:10px; font-size: 0.8rem; opacity: 0.8;">(Tiup lilinnya yang kencang yaaw)</p>
+    </div>
+
+    <div id="gate-phase">
+        <div class="gate-card">
+            <h1 style="font-size: 2rem; margin-bottom: 10px;">Eits, Tunggu dulu! ✋</h1>
+            <p style="color: #666; margin-bottom: 20px;">
+                Hadiah ini terkunci 🔒<br>
+                Kamu harus melewati <b>Labirin Cinta</b> untuk mendapatkan kuncinya.<br><br>
+                Tapi sebelum itu jawab pertanyaanku dulu...<br>
+                <b style="color: #d63384; font-size: 1.2rem;">Kamu Sayang Aku Ga?</b>
+            </p>
+            <div style="position: relative; height: 60px;">
+                <button id="btnYes" class="gate-btn">Sayanggg Bangettt! ❤️</button>
+                <button id="btnNo" class="gate-btn">Engga 😝</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-phase">
+        <h2 class="game-title">Ayoo jalan ke arahku untuk mendapatkan kuncinya❤️</h2>
+        <div id="maze-container">
+            </div>
+        
+        <div class="controls">
+            <div class="control-row"><button class="control-btn" id="upBtn">⬆️</button></div>
+            <div class="control-row">
+                <button class="control-btn" id="leftBtn">⬅️</button>
+                <button class="control-btn" id="downBtn">⬇️</button>
+                <button class="control-btn" id="rightBtn">➡️</button>
+            </div>
+        </div>
+
+        <div id="win-modal">
+            <div class="win-card">
+                <h2>YEEAAYYY! YOU DID IT SAYANGG! 🎉</h2>
+                <p>Akhirnya kamu berhasil menemukan kuncinya🗝️</p>
+                <button class="gate-btn" style="background: #d63384; color: white;" onclick="goToCard()">Buka Hadiah ❤️</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="card-phase">
+        <div id="bonusModal" class="modal">
+            <div class="modal-content">
+                <span class="close-popup" onclick="closeBonus()">&times;</span>
+                <h2 style="font-family: 'Dancing Script'; color: #d63384;">Spesial Buat Kamu</h2>
+                <p style="font-size:0.9rem;">Tonton ini ya cintaa ❤️</p>
+                <video id="bonusVideo" width="100%" controls style="border-radius: 10px; margin-bottom: 10px;">
+                    <source src="Aizhwa.mp4" type="video/mp4">
+                    Browser gak support video.
+                </video>
+                <button onclick="closeBonus()" style="margin-top: 15px; background: #ddd; border: none; padding: 8px 20px; border-radius: 20px; cursor: pointer;">Tutup</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="slide active">
+                <h1>Haiii Sayanggg...</h1>
+                <p>Selamat yaaw! Kamu  udah berhasil melewati rintangannya.<br>Sekarang kamu bisa membuka hadiahmu.</p>
+                <button class="btn-start" onclick="nextSlide()">Lihat Isinya ❤️</button>
+            </div>
+
+            <div class="slide">
+                <h1>Happy Birthday!</h1>
+                <div class="foto-frame"><img src="foto1.jpg" alt="Foto 1"></div>
+                <p>Selamat bertambah usia sayanggku ✨<br>Semoga hari-harimu selalu penuh senyum, tawa kecil, dan hal-hal manis, karena aku bakal selalu ada di samping kamu, nemenin dan sayang sama kamu terus.</p>
+            </div>
+
+            <div class="slide">
+                <h1>Proud of You!</h1>
+                <div class="foto-frame" style="transform: rotate(2deg);"><img src="foto2.jpg" alt="Foto 2"></div>
+                <p>Aku bangga bgtt sama kamu, sayangg, sama semua proses dan usaha yg kamu jalanin, karena setiap langkahmu selalu bikin aku makin kagum dan makin kecintaan hehe.</p>
+            </div>
+
+            <div class="slide">
+                <h1>Our Memories</h1>
+                <div class="memories-grid">
+                    <img src="foto3.jpg" alt="Memori 1">
+                    <img src="foto4.jpg" alt="Memori 2">
+                    <img src="foto5.jpg" alt="Memori 3"> 
+                    <img src="foto6.jpg" alt="Memori 4">
+                </div>
+                <p style="font-size: 0.8rem;">Selama setahun ini kita udh melewati banyak momen dari momen kecil sampe hari-hari penting yg selalu bikin bangga, semuanya jadi bukti kalo cerita kita tuh sederhana tapi hangat, dan semoga ke depannya masih ada banyak tawa kecil, foto random, dan kenangan manis yg tumbuh bareng tanpa sadar 🤍</p>
+            </div>
+
+            <div class="slide">
+                <h1>Surat Cinta</h1>
+                <p style="font-size: 0.8rem; margin-bottom: 5px;">Klik amplopnya! 💌</p>
+                
+                <div class="envelope-wrapper" onclick="toggleLetter()">
+                    <div class="envelope">
+                        <div class="lid">
+                            <div class="heart-sticker">❤️</div>
+                        </div>
+                        <div class="letter">
+                            <p>
+                                <b>Dear Atlata Febriana🤍,</b><br><br>
+                                Happy birthday, my favourite person✨<br>
+                                Hari ini tuh spesial bgt, bukan cuma karena hari lahirmu, tapi karena dunia pernah mutusin buat ngasih aku kamu. I’m really grateful, like really really grateful, bisa kenal kamu, jalan bareng kamu, ketawa bareng kamu, bahkan ngelewatin hari-hari capek bareng kamu.Thank you for being you, dengan segala kurang lebihmu yg justru bikin aku kecintaan berkali-kali. Makasii yaa udh selalu ada, dengerin ceritaku yg kadang random, nemenin aku di saat aku cape, dan bikin hari-hariku jauh lebih berwarna. You make my days softer, warmer, and happier in ways you probably don’t even realize.<br><br>
+                                Di umurmu yg baru ini, aku berharap kamu selalu sehat, hatimu selalu tenang, langkahmu selalu dimudahkan, dan mimpi-mimpimu pelan-pelan jadi kenyataan. Semoga kamu bisa terus jadi dirimu sendiri tanpa harus merasa kurang, karena in my eyes, you’re already more than enough. No matter what happens next, I hope you know that you’re loved, appreciated, and cherished. Aku mungkin ga sempurna, tapi aku akan selalu berusaha jadi yg terbaik buat kamu, dan aku mau terus ada di sampingmu, growing together, learning together, and loving you a little more every day.<br><br>
+                                <i>Once again, happy birthday my love 💕</i>
+				<i>Aku sayang kamu, today, tomorrow, and always.</i>
+                            </p>
+                        </div>
+                        <div class="pocket"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="foto-frame" style="width: 140px; height: 140px; border-radius: 50%;"><img src="foto7.jpg" alt="Foto Akhir"></div>
+                <h1>I Love You Calon Istriku</h1>
+                <p>Forever & Always.</p>
+                <button class="btn-bonus" onclick="showBonus()">🎁 Ada Bonus!</button>
+            </div>
+
+            <div class="nav-container">
+                <button class="nav-btn" id="prevBtn" onclick="prevSlide()" disabled>&#8592; Back</button>
+                <button class="nav-btn" id="nextBtn" onclick="nextSlide()" disabled style="opacity: 0;">Next &#8594;</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- VARIABLES ---
+        const micBtn = document.getElementById('micBtn');
+        const flames = document.querySelectorAll('.flame');
+        const candlePhase = document.getElementById('candle-phase');
+        const gatePhase = document.getElementById('gate-phase');
+        const gamePhase = document.getElementById('game-phase');
+        const cardPhase = document.getElementById('card-phase');
+        const music = document.getElementById("lagu");
+        const modal = document.getElementById("bonusModal");
+        const bonusVideo = document.getElementById("bonusVideo");
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const btnYes = document.getElementById('btnYes');
+        const btnNo = document.getElementById('btnNo');
+        const candles = document.querySelectorAll('.candle');
+        
+        let isCandleOut = false;
+
+        // --- BACKGROUND ---
+        function createBackgroundHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('floating-heart');
+            heart.innerHTML = '❤️'; 
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            const duration = Math.random() * 3 + 4; 
+            heart.style.animationDuration = duration + 's';
+            document.getElementById('bgHearts').appendChild(heart);
+            setTimeout(() => { heart.remove(); }, duration * 1000);
+        }
+        setInterval(createBackgroundHeart, 500); 
+
+        // --- 1. CANDLE LOGIC ---
+        function checkAllCandles() {
+            const allOff = Array.from(flames).every(flame => flame.classList.contains('flame-off'));
+            if (allOff && !isCandleOut) {
+                isCandleOut = true;
+                micBtn.style.display = "none";
+                if (music) { music.play().catch(() => console.log("Autoplay blocked")); }
+                
+                var duration = 2 * 1000;
+                var end = Date.now() + duration;
+                (function frame() {
+                    confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 } });
+                    confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 } });
+                    if (Date.now() < end) requestAnimationFrame(frame);
+                }());
+
+                setTimeout(() => {
+                    candlePhase.style.opacity = "0"; 
+                    setTimeout(() => {
+                        candlePhase.style.display = "none"; 
+                        showGate();
+                    }, 1000);
+                }, 2000);
+            }
+        }
+
+        // Logic Klik Lilin Manual
+        candles.forEach(candle => {
+            candle.addEventListener('click', () => {
+                const flame = candle.querySelector('.flame');
+                if (flame && !flame.classList.contains('flame-off')) {
+                    flame.classList.add('flame-off');
+                    checkAllCandles();
+                }
+            });
+        });
+
+        // --- 2. GATEKEEPER LOGIC ---
+        function showGate() { gatePhase.style.display = 'flex'; }
+        function moveBtnNo() {
+            const x = Math.random() * (window.innerWidth - btnNo.offsetWidth - 20);
+            const y = Math.random() * (window.innerHeight - btnNo.offsetHeight - 20);
+            btnNo.style.position = 'fixed'; btnNo.style.left = x + 'px'; btnNo.style.top = y + 'px';
+        }
+        btnNo.addEventListener('mouseover', moveBtnNo);
+        btnNo.addEventListener('touchstart', (e) => { e.preventDefault(); moveBtnNo(); });
+        btnNo.addEventListener('click', (e) => { e.preventDefault(); moveBtnNo(); });
+        btnYes.addEventListener('click', () => { gatePhase.style.display = 'none'; startGame(); });
+
+        // --- 3. MAZE GAME LOGIC (LEVEL HARD - ZIGZAG) ---
+        const mazeMap = [
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 2, 0, 0, 1, 0, 0, 0, 0, 1],
+            [1, 1, 1, 0, 1, 0, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+            [1, 0, 1, 1, 1, 1, 1, 0, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 3, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        ];
+        
+        let playerPos = { x: 1, y: 1 };
+        const mazeContainer = document.getElementById('maze-container');
+        
+        function startGame() {
+            gamePhase.style.display = 'flex';
+            drawMaze();
+            document.addEventListener('keydown', handleKeyPress);
+        }
+
+        function drawMaze() {
+            mazeContainer.innerHTML = '';
+            for (let y = 0; y < mazeMap.length; y++) {
+                for (let x = 0; x < mazeMap[y].length; x++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    if (mazeMap[y][x] === 1) cell.classList.add('wall');
+                    if (x === playerPos.x && y === playerPos.y) {
+                        cell.classList.add('player');
+                        cell.innerHTML = '👧';
+                    }
+                    if (mazeMap[y][x] === 3) {
+                        cell.classList.add('goal');
+                        cell.innerHTML = '👦';
+                    }
+                    mazeContainer.appendChild(cell);
+                }
+            }
+        }
+
+        function movePlayer(dx, dy) {
+            const newX = playerPos.x + dx;
+            const newY = playerPos.y + dy;
+            if (mazeMap[newY][newX] !== 1) {
+                playerPos = { x: newX, y: newY };
+                drawMaze();
+                if (mazeMap[newY][newX] === 3) {
+                    document.getElementById('win-modal').style.display = 'flex';
+                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                }
+            }
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'ArrowUp') movePlayer(0, -1);
+            else if (e.key === 'ArrowDown') movePlayer(0, 1);
+            else if (e.key === 'ArrowLeft') movePlayer(-1, 0);
+            else if (e.key === 'ArrowRight') movePlayer(1, 0);
+        }
+
+        document.getElementById('upBtn').addEventListener('click', () => movePlayer(0, -1));
+        document.getElementById('downBtn').addEventListener('click', () => movePlayer(0, 1));
+        document.getElementById('leftBtn').addEventListener('click', () => movePlayer(-1, 0));
+        document.getElementById('rightBtn').addEventListener('click', () => movePlayer(1, 0));
+
+        function goToCard() {
+            gamePhase.style.display = 'none';
+            cardPhase.style.display = 'flex';
+            setTimeout(() => { cardPhase.style.opacity = "1"; }, 100);
+        }
+
+        // --- MIC EVENT ---
+        micBtn.addEventListener('click', async () => {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert("Browser tidak mendukung akses mic atau koneksi tidak aman (HTTPS). Silakan klik lilinnya satu per satu ya!");
+                return;
+            }
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const analyser = audioContext.createAnalyser();
+                const microphone = audioContext.createMediaStreamSource(stream);
+                const scriptProcessor = audioContext.createScriptProcessor(2048, 1, 1);
+                analyser.smoothingTimeConstant = 0.8; analyser.fftSize = 1024;
+                microphone.connect(analyser); analyser.connect(scriptProcessor);
+                scriptProcessor.connect(audioContext.destination);
+                micBtn.innerText = "Tiup Sekarang! 🌬️";
+                scriptProcessor.onaudioprocess = function() {
+                    const array = new Uint8Array(analyser.frequencyBinCount);
+                    analyser.getByteFrequencyData(array);
+                    let values = 0; for (let i = 0; i < array.length; i++) values += array[i];
+                    if ((values / array.length) > 30) { 
+                        flames.forEach(flame => setTimeout(() => { flame.classList.add('flame-off'); checkAllCandles(); }, Math.random() * 500));
+                    }
+                };
+            } catch (err) { alert("Gagal akses mic (mungkin ditolak). Klik lilinnya aja ya manual!"); }
+        });
+
+        // --- SLIDE NAVIGATION ---
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function updateNavButtons() {
+            prevBtn.disabled = (currentSlide === 0);
+            if (currentSlide === slides.length - 1) {
+                nextBtn.disabled = true; nextBtn.style.opacity = "0";
+            } else {
+                nextBtn.disabled = false;
+                if (currentSlide === 0) nextBtn.style.opacity = "0";
+                else nextBtn.style.opacity = "1";
+            }
+        }
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if (i === index) slide.classList.add('active');
+            });
+            updateNavButtons();
+        }
+        
+        function nextSlide() { if (currentSlide < slides.length - 1) { currentSlide++; showSlide(currentSlide); } }
+        function prevSlide() { if (currentSlide > 0) { currentSlide--; showSlide(currentSlide); } }
+
+        updateNavButtons();
+
+        // --- BONUS & ENVELOPE ---
+        function showBonus() { if(music) music.pause(); modal.classList.add("open"); }
+        function closeBonus() { if(bonusVideo) bonusVideo.pause(); modal.classList.remove("open"); if(music) music.play(); }
+        function toggleLetter() { document.querySelector('.envelope-wrapper').classList.toggle('open'); }
+    </script>
+</body>
+</html>
